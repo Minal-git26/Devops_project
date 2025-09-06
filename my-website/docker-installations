@@ -1,0 +1,38 @@
+Manual Docker Workflow (Local or on EC2)
+Use these step-by-step Docker commands:
+
+🔁 Step 1: Clone your project from GitHub
+cd /opt/docker   # or wherever you want
+rm -rf news
+git clone https://github.com/AyushShukla66/project_aws.git news
+cd news
+
+
+🔑 Step 2: Log in to Docker Hub
+docker login -u ayushditiss -p Ayushshukla@66
+
+
+🏗️ Step 3: Build Docker image
+docker build -t ayushditiss/news_project:latest .
+
+✅ This command looks for the Dockerfile inside /opt/docker/news and builds the image.
+
+🏷️ Step 4: Tag the image (optional but recommended)
+docker tag ayushditiss/news_project:latest ayushditiss/news_project:latest
+
+
+📤 Step 5: Push image to Docker Hub
+docker push ayushditiss/news_project:latest
+
+
+✅ Final Check (Optional)
+docker images          # check if image is built
+docker ps -a           # check running/stopped containers
+
+
+🚀 Deploy to Kubernetes After Push
+Once your image is pushed, you can now use your Ansible playbook (kubernatics-deploy.yml) to apply deployment:
+ansible-playbook kubernatics-deploy.yml
+
+
+If you want help rewriting the Dockerfile, cleaning images, or automating cleanup—just ask.
