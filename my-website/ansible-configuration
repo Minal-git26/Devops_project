@@ -1,0 +1,94 @@
+Ansible configurations : -
+
+Sudo adduser ansibleadmin
+// all command is running on ansibleadmin 
+Sudo apt install ansible -y
+Cd /etc/ansible 
+ansible.cfg            hosts
+// if this two file is created or you have to create this files in your machine 
+Sudo nano hosts
+[ansible]
+172.31.91.80
+3.84.7.95 ansible_user=admin ansible_ssh_private_key_file=/home/ansibleadmin/.ssh/id_rsa
+
+
+[web]
+3.84.7.95 ansible_user=admin ansible_ssh_private_key_file=/home/ansibleadmin/.ssh/id_rsa
+[kubernetes]
+#172.31.81.159 ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa
+#54.166.96.217 ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa
+172.31.89.7 ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa
+
+
+
+
+Sudo apt install docker.io - y
+Cd /opt/docker
+kubernatics-deploy.yml    new_news.yml 
+// Build the two field as per you as you want 
+ 
+Sudo nano  kubernatics-deploy.yml
+---
+- hosts: kubernetes
+  user: root
+
+
+  tasks:
+    - name: deploy newsapp on kubernetes
+      command: kubectl apply -f new_news-deployment.yml
+
+
+    - name: create service for newsapp
+      command: kubectl apply -f news_app-service.yml
+
+
+    - name: update deployment with new pods if image in docker hub
+      command: kubectl rollout restart deployment/news-latest
+
+
+
+
+Sudo nano news_news.yml
+---
+- hosts: web
+  become: yes
+
+
+  tasks:
+    - name: Ensure project directory is removed (if any)
+      file:
+        path: /opt/docker/news
+        state: absent
+
+
+    - name: Clone repository
+      git:
+        repo: https://github.com/AyushShukla66/project_aws.git
+        dest: /opt/docker/news
+        clone: yes
+        update: yes
+
+
+    - name: Log in to Docker Hub
+      command: docker login -u ayushditiss -p Ayushshukla@66
+      register: docker_login
+      changed_when: "'Login Succeeded' in docker_login.stdout"
+
+
+    - name: Build Docker image
+      command: docker build -t ayushditiss/news_project:latest .
+      args:
+        chdir: /opt/docker/news
+
+
+    - name: Tag Docker image
+      command: docker tag ayushditiss/news_project:latest ayushditiss/news_project:latest
+
+
+    - name: Push Docker image to Docker Hub
+      command: docker push ayushditiss/news_project:latest
+
+
+Ansible-playbook kubernatics-deploy.yml
+Ansible-playbook new_news.yml
+// to test the playbook that run your commands
