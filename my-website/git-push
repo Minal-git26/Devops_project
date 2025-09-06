@@ -1,0 +1,13 @@
+Sudo apt install git
+git init
+git add .               // dout (.) is use to allocate this file
+git commit -m  “ first commit ”
+git config add user.name “ayushditiss/project_aws ”       // name no the git and repository 
+git config add user.email “ayushshukla4621@gmail.com”         // email of the git hub 
+git remote add origine “git@github.com:AyushShukla66/gitnots.git”    	// add the git ssh key to hear
+git commit -m  “ first commit ”
+cd 
+Ssh-keygen -t rsa 
+Cd .ssh
+.ssh/~  cat id-rsa.pub
+// copy the ssh pub key and add to the git hub and add the key into it 
