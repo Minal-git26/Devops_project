@@ -1,0 +1,33 @@
+apiVersion: apps/v1               # Uses apps/v1 for Deployments
+kind: Deployment                  # Declares a Deployment kind
+metadata:
+  name: news-latest               # Deployment name
+  labels:
+    app: news-app                 # Label for Deployment metadata
+
+
+spec:
+  replicas: 2                     # Creates 2 pods
+  selector:
+    matchLabels:
+      app: news-app               # Targets pods with label app=news-app
+
+
+  template:
+    metadata:
+      labels:
+        app: news-app             # Applies this label to pods created
+    spec:
+      containers:
+      - name: news-app
+        image: ayushditiss/news_project        # Docker image to use
+        imagePullPolicy: Always                # Always pull latest image
+        ports:
+        - containerPort: 80                    # Container listens on port 80
+
+
+  strategy:
+    type: RollingUpdate                      # Use rolling update strategy
+    rollingUpdate:
+      maxSurge: 1                            # Allow 1 extra pod during update
+      maxUnavailable: 1                      # Allow 1 unavailable pod at a time
