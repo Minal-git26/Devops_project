@@ -1,0 +1,40 @@
+---
+- hosts: ansible
+  become: true
+  tasks:
+
+    - name: Create parent directory /opt/docker
+      file:
+        path: /opt/docker
+        state: directory
+        mode: '0755'
+
+    - name: Clone GitHub repository
+      git:
+        repo: https://github.com/AyushShukla66/project-CI-CD-Pipline-.git
+        dest: /opt/docker/ditiss
+        clone: yes
+        update: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: DockerHub Login
+      command: docker login -u "ayushditiss" -p "Ayushshukla66"
+
+    - name: Build Docker image
+      command: docker build -t ayushditiss/ditiss:latest .
+      args:
+        chdir: /opt/docker/ditiss
+
+    - name: Push Docker image
+      command: docker push ayushditiss/ditiss:latest
